@@ -27,6 +27,7 @@ class StoreUserRequest extends FormRequest
             'password' => 'required|string|min:6',
             'is_active' => 'boolean',
             'role'     => 'in:admin,customer,staff',
+
         ];
     }
 }
