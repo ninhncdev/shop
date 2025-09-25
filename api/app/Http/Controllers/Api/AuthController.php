@@ -61,15 +61,23 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
         $token = $user->createToken('auth_token')->plainTextToken;
+        $cookie = cookie(
+            'token',          // tên cookie
+            $token,           // giá trị
+            60 * 24 * 7,      // thời gian sống (phút) = 7 ngày
+            '/',              // path
+            null,             // domain
+            true,             // Secure -> chỉ HTTPS
+            true              // HttpOnly -> JS không đọc được
+        );
 
         return response()->json([
             'status' => true,
             'message' => 'Đăng nhập thành công',
             'data' => [
                 'user' => $user,
-                'token' => $token
             ]
-        ]);
+        ])->cookie($cookie);;
     }
 
     public function logout(Request $request)
@@ -79,7 +87,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Đăng xuất thành công'
-        ]);
+        ])->cookie('token', '', -1);
     }
 
     public function me(Request $request)
